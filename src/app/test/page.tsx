@@ -93,41 +93,34 @@ export default function Home() {
     const overColumn = findColumnIdx(columns, over.id.toString());
 
     const droppedInTheSameColumn = grabAtColumn == overColumn;
+    let cols: any[][];
     if (droppedInTheSameColumn) {
-      const cols = swapPositionsInTheSameColumn({
+      cols = swapPositionsInTheSameColumn({
         columns,
         columnIdx: grabAtColumn!,
         itemId: Number(active.id.toString()),
         overItemId: Number(over.id.toString()),
       });
-      setColumns(cols);
-      setPages((prev) => {
-        for (const pageIdx in prev) {
-          if (Number(pageIdx) == currentPage) {
-            prev[pageIdx] = cols;
-          }
-        }
-        return prev;
-      });
     } else {
-      const cols = swapPositionsBetweenColumns({
+      cols = swapPositionsBetweenColumns({
         columns,
         columnIdx: grabAtColumn!,
         overColumnIdx: overColumn!,
         itemId: Number(active.id.toString()),
         overItemId: Number(over.id.toString()),
+        pageHeightPx,
       });
-      setColumns(cols);
-      setPages((prev) => {
-        for (const pageIdx in prev) {
-          if (Number(pageIdx) == currentPage) {
-            prev[pageIdx] = cols;
-          }
-        }
-        return prev;
-      });
-      calcColumnsGapY(pageHeightPx, pages);
     }
+    setColumns(cols);
+    setPages((prev) => {
+      for (const pageIdx in prev) {
+        if (Number(pageIdx) == currentPage) {
+          prev[pageIdx] = cols;
+        }
+      }
+      return prev;
+    });
+    if (!droppedInTheSameColumn) calcColumnsGapY(pageHeightPx, pages);
   };
 
   return (
